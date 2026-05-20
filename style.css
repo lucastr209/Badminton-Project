@@ -248,3 +248,33 @@ body.dark-theme .match-tag { color: #ffb300; background: rgba(255, 179, 0, 0.15)
     #booking-form, #booking-ticket { grid-column: 1 / 2; }
     .matchmaking-section { grid-column: 2 / 3; grid-row: 2 / 4; margin-bottom: 0; }
 }
+/* =========================================
+   11. FIX LỖI GIAO DIỆN TRÊN ĐIỆN THOẠI (MOBILE RESPONSIVE)
+   ========================================= */
+
+/* Fix 1: Ép khung Ngày tháng không được lẹm ra ngoài (Đặc trị iOS Safari) */
+input[type="date"] {
+    width: 100% !important;
+    max-width: 100% !important; /* Khóa chết chiều ngang tối đa */
+    box-sizing: border-box !important;
+    display: block !important;
+    -webkit-appearance: none; /* Xóa bỏ style mặc định cứng nhắc của Apple */
+    appearance: none;
+    min-height: 50px; /* Đảm bảo đủ độ cao để bấm bằng ngón tay */
+}
+
+/* Fix 2: Xử lý chữ mục Đặt Cố Định bị dồn và đè lên nhau */
+.recurring-label {
+    display: flex !important;
+    align-items: flex-start !important; /* Căn nút check lên ngang hàng với dòng chữ đầu tiên */
+    line-height: 1.5 !important; /* Nới rộng khoảng cách giữa các dòng chữ cho "dễ thở" */
+    font-size: 14px !important; /* Thu nhỏ chữ lại một xíu trên mobile để vừa khung */
+}
+
+.recurring-checkbox {
+    flex-shrink: 0 !important; /* Lệnh quan trọng: KHÔNG cho phép nút check bị móp méo khi chữ dài ra */
+    width: 22px !important;
+    height: 22px !important;
+    margin-right: 12px !important;
+    margin-top: 0 !important;
+}
