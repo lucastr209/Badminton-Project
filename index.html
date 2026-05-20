@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AK Badminton - Premium Booking</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <label class="theme-toggle-container" for="theme-toggle-checkbox">
+        <span id="theme-label-text" class="theme-label-text">☀️</span>
+        <div class="ios-switch">
+            <input type="checkbox" id="theme-toggle-checkbox">
+            <span class="slider"></span>
+        </div>
+    </label>
+
+    <header class="fancy-header">
+        <h1>AK Badminton</h1>
+        <p>Hệ Thống Đặt Sân Ma Trận - Chuẩn BWF</p>
+    </header>
+
+    <main class="premium-layout">
+        <h2 class="main-title">Đăng ký thuê sân</h2>
+        
+        <form id="booking-form">
+            
+            <div class="premium-card">
+                <h3>👤 Thông tin liên hệ</h3>
+                <label for="customer-name">Họ và tên:</label>
+                <input type="text" id="customer-name" placeholder="Nhập họ tên của bạn" required>
+                
+                <label for="customer-phone" style="margin-top: 15px; display: block;">Số điện thoại:</label>
+                <input type="tel" id="customer-phone" placeholder="Nhập số điện thoại" required>
+            </div>
+
+            <div class="premium-card matrix-card">
+                <label for="booking-date" class="highlight-label">📅 Chọn Ngày Để Xem Bảng Giờ:</label>
+                <input type="date" id="booking-date" required>
+                
+                <div class="flash-sale-banner">
+                    <span class="fire-icon">🔥</span>
+                    <span><strong>GIỜ CHÓT:</strong> Các ô màu tím nhấp nháy đang được giảm giá 30%!</span>
+                </div>
+
+                <div class="recurring-box">
+                    <label class="recurring-label">
+                        <input type="checkbox" id="recurring-booking" class="recurring-checkbox"> 
+                        🔄 Đặt Cố Định Theo Tháng (Giữ sân 4 tuần liên tiếp)
+                    </label>
+                </div>
+
+                <div class="matrix-legend">
+                    <span><div class="box empty"></div> Trống</span>
+                    <span><div class="box sale"></div> Flash Sale</span>
+                    <span><div class="box selected"></div> Đang chọn</span>
+                    <span><div class="box booked"></div> Kín</span>
+                </div>
+
+                <div class="matrix-container" id="matrix-container">
+                    <p class="empty-matrix-text">Vui lòng chọn ngày để hệ thống tải sơ đồ sân.</p>
+                </div>
+            </div>
+            
+            <div class="premium-card">
+                <h3>🛒 Dịch vụ & Thanh toán</h3>
+                
+                <label class="section-label">Dịch vụ đi kèm (Tùy chọn):</label>
+                <div class="services-group">
+                    <label><input type="checkbox" class="service-item" value="Trà đá" data-price="10000"> 🥤 Trà đá (10.000đ)</label>
+                    <label><input type="checkbox" class="service-item" value="Thuê vợt" data-price="50000"> 🏸 Thuê vợt (50.000đ)</label>
+                    <label><input type="checkbox" class="service-item" value="Ống cầu" data-price="180000"> 🏸 Ống cầu VinaStar (180.000đ)</label>
+                </div>
+
+                <label class="section-label" style="margin-top: 20px;">Phương thức thanh toán:</label>
+                <div class="services-group">
+                    <label><input type="radio" name="payment-method" value="qr" checked> 📱 Quét mã QR (Khuyên dùng)</label>
+                    <label><input type="radio" name="payment-method" value="cash"> 💵 Thanh toán Tiền mặt tại sân</label>
+                </div>
+
+                <button type="submit" id="submit-btn" class="btn-gradient-primary">XÁC NHẬN ĐẶT SÂN</button>
+            </div>
+        </form>
+
+        <div id="booking-ticket" class="premium-card e-ticket" style="display: none;">
+            <div class="ticket-header">
+                <h3>🎟️ PREMIUM E-TICKET</h3>
+                <p>AK Badminton Club</p>
+            </div>
+            
+            <div class="ticket-body" id="ticket-capture-area"> <p><strong>Khách hàng:</strong> <span id="ticket-name"></span></p>
+                <p><strong>Liên hệ:</strong> <span id="ticket-contact"></span></p>
+                <p><strong>Ngày đặt:</strong> <span id="ticket-date"></span></p>
+                <p><strong>Sân:</strong> <span id="ticket-court"></span></p>
+                <p><strong>Thời gian:</strong> <span id="ticket-time"></span></p>
+                <p><strong>Dịch vụ thêm:</strong> <span id="ticket-services"></span></p>
+                
+                <div class="ticket-divider"></div>
+                
+                <p class="total-price">TỔNG TIỀN: <span id="ticket-total">0</span> VNĐ</p>
+                
+                <div class="split-bill-box">
+                    <p class="split-title">🤝 Đánh nhóm? Chia tiền nhanh:</p>
+                    <div class="split-controls">
+                        <span>Chia cho:</span>
+                        <input type="range" id="split-slider" min="1" max="10" value="1" class="neon-slider">
+                        <strong><span id="split-count">1</span> người</strong>
+                    </div>
+                    <p class="split-result">Mỗi người: <strong><span id="split-amount">0</span> VNĐ</strong></p>
+                </div>
+                
+                <p class="thank-you">Vui lòng đưa vé này cho lễ tân để nhận sân!</p>
+            </div>
+            
+            <div class="ticket-actions">
+                <button id="send-zalo-btn" class="btn-gradient-zalo">💬 Gửi Zalo Lễ Tân</button>
+                <button id="download-ticket-btn" class="btn-gradient-download">📥 Tải Ảnh Vé Thu Tiền</button>
+            </div>
+        </div>
+        
+        <div class="premium-card matchmaking-section">
+            <h2>🤝 Cộng Đồng Ghép Kèo AK</h2>
+            <p class="subtitle">Thiếu tay? Hãy tạo yêu cầu ghép kèo ngay!</p>
+
+            <form id="match-form" class="match-form">
+                <input type="text" id="match-name" placeholder="Tên của bạn/Nhóm" required>
+                <input type="tel" id="match-phone" placeholder="Số Zalo liên hệ" required>
+                
+                <select id="match-level">
+                    <option value="Yếu/Mới chơi">Trình độ: Yếu/Mới chơi</option>
+                    <option value="Trung Bình">Trình độ: Trung Bình</option>
+                    <option value="Khá/Giỏi">Trình độ: Khá/Giỏi</option>
+                </select>
+
+                <input type="text" id="match-time" placeholder="VD: 19h tối nay tại Sân 3" required>
+                
+                <button type="submit" id="post-match-btn" class="btn-gradient-secondary">Đăng Tin Yêu Cầu</button>
+            </form>
+
+            <div id="match-board" class="match-board">
+                </div>
+        </div>
+        
+    </main>
+
+    <div id="payment-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content premium-modal">
+            <span class="close-modal-x" id="cancel-modal-x">&times;</span>
+            
+            <h3>💳 Thanh Toán Đơn Hàng</h3>
+            <p>Vui lòng chuyển khoản chính xác số tiền:</p>
+            <div class="timer-box">
+                <p id="countdown-timer"></p>
+            </div>
+            <p class="modal-total-price"><span id="modal-total-amount">0</span> VNĐ</p>
+
+            <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SimulatedPaymentAKBadminton" alt="Mã QR" class="qr-code-img">
+
+            <p id="payment-instruction" class="instruction">Quét mã bằng ứng dụng Ngân hàng hoặc Ví điện tử (Momo/ZaloPay).</p>
+            <p class="note">*Lưu ý: Hệ thống sẽ tự động xác nhận khi nhận được tiền.</p>
+
+            <div class="modal-buttons">
+                <button type="button" id="confirm-payment-btn" class="btn-gradient-success">Tôi Đã Thanh Toán</button>
+                <button type="button" id="cancel-payment-btn" class="btn-outline-cancel">Hủy Bỏ</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast-container"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
