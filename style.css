@@ -299,3 +299,83 @@ input[type="date"] {
     margin-right: 12px !important;
     margin-top: 0 !important;
 }
+
+/* =========================================
+   12. HIỆU ỨNG LIQUID GLASS (GLASSMORPHISM)
+   ========================================= */
+
+/* 1. Tạo nền Liquid (Chất lỏng) chuyển động mượt mà cho chế độ Sáng */
+body {
+    background: linear-gradient(-45deg, #a8edea, #fed6e3, #e0c3fc, #8ec5fc) !important;
+    background-size: 400% 400% !important;
+    animation: liquidGradient 12s ease infinite !important;
+    background-attachment: fixed !important;
+}
+
+/* 2. Tạo nền Liquid tĩnh lặng, huyền bí cho chế độ Tối (Dark Mode) */
+body.dark-theme {
+    background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #141e30) !important;
+    background-size: 400% 400% !important;
+    animation: liquidGradient 15s ease infinite !important;
+    background-attachment: fixed !important;
+}
+
+@keyframes liquidGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 3. Bơm hiệu ứng Kính Mờ (Glass) vào toàn bộ các Khối Thẻ */
+.premium-card, 
+.services-group, 
+.matrix-container, 
+.match-card, 
+.e-ticket, 
+.custom-toast, 
+.premium-modal,
+.fancy-header {
+    /* Đổ màu nền bán trong suốt */
+    background: rgba(255, 255, 255, 0.25) !important; 
+    
+    /* Thuật toán tạo kính mờ */
+    backdrop-filter: blur(16px) !important; 
+    -webkit-backdrop-filter: blur(16px) !important; /* Hỗ trợ Safari/iOS */
+    
+    /* Viền trắng mỏng tạo cảm giác mép kính */
+    border: 1px solid rgba(255, 255, 255, 0.4) !important; 
+    border-top: 1px solid rgba(255, 255, 255, 0.8) !important; 
+    border-left: 1px solid rgba(255, 255, 255, 0.8) !important; 
+    
+    /* Đổ bóng để tách kính bồng bềnh khỏi nền */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important; 
+}
+
+/* 4. Điều chỉnh độ trong suốt của Kính khi ở Dark Mode */
+body.dark-theme .premium-card, 
+body.dark-theme .services-group, 
+body.dark-theme .matrix-container, 
+body.dark-theme .match-card, 
+body.dark-theme .e-ticket, 
+body.dark-theme .custom-toast, 
+body.dark-theme .premium-modal,
+body.dark-theme .fancy-header {
+    background: rgba(16, 17, 20, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 5. Ép nền của một số thẻ con bên trong thành trong suốt để không chắn lớp kính */
+.matrix-table th, 
+.matrix-table td.time-col {
+    background-color: transparent !important;
+}
+.ticket-actions, .split-bill-box {
+    background: rgba(255,255,255, 0.1) !important;
+}
+body.dark-theme .ticket-actions, 
+body.dark-theme .split-bill-box {
+    background: rgba(0,0,0, 0.2) !important;
+}
