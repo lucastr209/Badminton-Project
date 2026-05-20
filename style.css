@@ -1,0 +1,590 @@
+/* =========================================
+   1. CẤU HÌNH CƠ BẢN TỔNG THỂ
+   ========================================= */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body { background-color: #f4f7f6; color: #333; }
+header { background-color: #2E8B57; color: white; text-align: center; padding: 20px 0; margin-bottom: 30px; }
+main { max-width: 500px; margin: 0 auto; background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+input, select { width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; }
+button { width: 100%; padding: 12px; background-color: #ff8c00; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+button:hover { background-color: #e67e22; transition: 0.3s; }
+
+/* =========================================
+   2. NÚT GẠT DARK MODE (IOS STYLE - Ở DƯỚI ĐÁY)
+   ========================================= */
+.theme-toggle-container {
+    position: fixed !important; 
+    bottom: 25px !important; /* Dời nút xuống cách đáy màn hình 25px */
+    right: 20px !important;  /* Nằm sát lề phải */
+    top: auto !important; /* Bắt buộc phải có dòng này để xóa lệnh dính trên đỉnh */
+    z-index: 9999 !important; 
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.9); 
+    padding: 6px 12px; 
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    cursor: pointer; /* Biến toàn bộ khối thành con trỏ bấm */
+}
+
+.theme-label-text {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.ios-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.ios-switch input { 
+    position: absolute; 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+    cursor: pointer;
+}
+
+.slider {
+    position: absolute; cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc; transition: .4s; border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute; content: "";
+    height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background-color: white; transition: .4s; border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+input:checked + .slider { background-color: #00c853; }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* =========================================
+   3. SƠ ĐỒ SÂN CẦU LÔNG (4 SÂN)
+   ========================================= */
+.court-map-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 25px;
+}
+
+.court-item {
+    background-color: #e8f5e9; 
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    text-align: center;
+    padding: 20px 0;
+    cursor: pointer;
+    font-weight: bold;
+    color: #2e7d32;
+    transition: all 0.2s;
+    background-image: linear-gradient(to bottom, transparent 48%, #fff 48%, #fff 52%, transparent 52%);
+}
+
+.court-item:hover { background-color: #c8e6c9; transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.court-item.selected {
+    background-color: #ff9800; border-color: #e65100; color: white;
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+    background-image: none; transform: scale(1.05); 
+}
+
+/* =========================================
+   4. BẢNG MA TRẬN THỜI GIAN (TIMELINE GRID)
+   ========================================= */
+#timeline-section {
+    margin-bottom: 25px; background: #fdfdfd; padding: 15px; border-radius: 8px;
+    border: 1px solid #e0e0e0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.timeline-legend { display: flex; gap: 15px; margin-bottom: 15px; font-size: 13px; color: #555; }
+.legend-box { width: 16px; height: 16px; display: inline-block; border-radius: 3px; vertical-align: middle;}
+.legend-box.available { background: #e8f5e9; border: 1px solid #4caf50; }
+.legend-box.booked { background: #ffebee; border: 1px solid #f44336; }
+
+.timeline-grid { overflow-x: auto; padding-bottom: 10px; }
+.court-row { display: flex; align-items: center; margin-bottom: 8px; min-width: 750px; }
+.court-name { width: 65px; font-weight: bold; font-size: 13px; color: #333; }
+
+.time-blocks { display: flex; flex: 1; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; }
+.time-block {
+    flex: 1; text-align: center; font-size: 11px; padding: 6px 0; 
+    border-right: 1px solid #ccc; font-weight: bold; cursor: default;
+}
+.time-block:last-child { border-right: none; }
+.time-block.available { background: #e8f5e9; color: #2e7d32; }
+.time-block.booked { background: #ffebee; color: #c62828; text-decoration: line-through; opacity: 0.8; }
+
+/* =========================================
+   5. GIAO DIỆN CHỌN GIỜ ĐỘNG (TIME SLOTS)
+   ========================================= */
+.time-slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.time-slot {
+    padding: 10px; border-radius: 6px; text-align: center; font-size: 14px;
+    cursor: pointer; border: 1px solid #ccc; background: #fff; color: #333; transition: all 0.2s;
+}
+.time-slot.available:hover { border-color: #2E8B57; color: #2E8B57; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.time-slot.available.selected { background: #2E8B57; color: #fff; border-color: #1e613c; font-weight: bold; transform: scale(1.05); }
+.time-slot.booked { background: #f5f5f5; color: #aaa; text-decoration: line-through; cursor: not-allowed; border-color: #eee; opacity: 0.7;}
+
+/* =========================================
+   6. DỊCH VỤ VÀ THANH TOÁN (CHECKBOX & RADIO) 
+   ========================================= */
+.services-group {
+    background-color: #f8f9fa; 
+    border: 1px solid #e0e0e0; 
+    border-radius: 8px; 
+    padding: 15px; 
+    margin-top: 10px; 
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); 
+}
+
+.services-group label { 
+    display: flex; 
+    justify-content: flex-start; /* Ép tất cả dồn sang trái thẳng hàng */
+    align-items: center; 
+    margin-bottom: 12px; 
+    font-size: 15px; 
+    color: #444; 
+    cursor: pointer; 
+    transition: 0.2s; 
+}
+
+.services-group label:last-child { 
+    margin-bottom: 0; 
+}
+
+.services-group label:hover { 
+    color: #2E8B57; 
+    font-weight: bold; 
+}
+
+/* Áp dụng chung cho cả ô vuông (Checkbox) và nút tròn (Radio) */
+.services-group input[type="checkbox"],
+.services-group input[type="radio"] { 
+    width: 20px; 
+    height: 20px; 
+    margin-right: 12px; 
+    margin-top: 0; 
+    accent-color: #2E8B57; /* Đổi nút thành màu xanh lá đồng bộ */
+    cursor: pointer; 
+    flex-shrink: 0; /* Giữ nút luôn tròn, không bị móp khi màn hình nhỏ */
+}
+
+.total-price {
+    font-size: 20px !important; color: #d32f2f !important; font-weight: 900; 
+    background-color: #ffebee; padding: 12px; border-radius: 6px; text-align: center;
+    border: 1px dashed #d32f2f; margin-top: 15px;
+}
+
+/* =========================================
+   7. PHIẾU ĐẶT SÂN VÀ BẢNG GHÉP KÈO
+   ========================================= */
+#booking-ticket { margin-top: 30px; padding: 20px; background-color: #e8f5e9; border: 2px dashed #2E8B57; border-radius: 8px; text-align: center; }
+#booking-ticket h3 { color: #2E8B57; margin-bottom: 15px; }
+#booking-ticket p { margin: 8px 0; font-size: 16px; color: #333; }
+.thank-you { font-style: italic; color: #555; }
+
+.matchmaking-section { margin-top: 50px; padding-top: 30px; border-top: 2px dashed #ccc; }
+.matchmaking-section h2 { color: #ff8c00; text-align: center; margin-bottom: 5px; }
+.matchmaking-section .subtitle { text-align: center; color: #666; margin-bottom: 25px; }
+.match-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background-color: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+.match-form input, .match-form select { margin-top: 0; }
+#post-match-btn { grid-column: span 2; background-color: #1E90FF; margin-top: 5px; }
+#post-match-btn:hover { background-color: #187bcd; }
+.match-board { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.match-card {
+    background-color: white; border-left: 5px solid #ff8c00; padding: 15px;
+    border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.match-info h4 { color: #333; margin-bottom: 5px; font-size: 18px; }
+.match-info p { margin: 3px 0; font-size: 14px; color: #555; }
+.match-tag {
+    display: inline-block; background-color: #e0f7fa; color: #00838f;
+    padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-top: 5px;
+}
+.contact-btn {
+    background-color: #25D366; color: white; text-decoration: none;
+    padding: 10px 15px; border-radius: 6px; font-weight: bold; font-size: 14px;
+}
+.contact-btn:hover { background-color: #20bd5a; }
+
+/* =========================================
+   8. POP-UP (MODAL) THANH TOÁN
+   ========================================= */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 9999; 
+}
+.modal-content {
+    background-color: white; padding: 30px; border-radius: 12px; width: 90%; 
+    max-width: 450px; text-align: center; position: relative; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: modalFadeIn 0.3s ease-out; 
+}
+@keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+.close-modal-x { position: absolute; top: 10px; right: 15px; font-size: 24px; color: #999; cursor: pointer; }
+.close-modal-x:hover { color: #333; }
+.modal-content h3 { color: #2E8B57; margin-bottom: 15px; }
+.modal-total-price {
+    font-size: 26px; color: #d32f2f; font-weight: bold;
+    margin: 10px 0 20px 0; background-color: #ffebee; padding: 10px; border-radius: 4px;
+}
+.qr-code-img { width: 200px; height: 200px; border: 1px solid #eee; padding: 5px; margin-bottom: 15px; }
+.instruction { font-size: 14px; color: #555; }
+.note { font-size: 12px; color: #888; font-style: italic; margin-top: 5px; margin-bottom: 25px;}
+
+.modal-buttons { display: flex; gap: 15px; justify-content: center; }
+.modal-buttons button { width: auto; margin-top: 0; padding: 12px 24px; }
+.pay-btn { background-color: #2E8B57; }
+.pay-btn:hover { background-color: #1e613c; }
+.cancel-btn { background-color: #757575; }
+.cancel-btn:hover { background-color: #616161; }
+
+/* =========================================
+   9. GIAO DIỆN TỐI (DARK MODE) NÂNG CẤP PREMIUM
+   ========================================= */
+body.dark-theme { background-color: #121212; color: #e4e6eb; }
+
+/* Nút gạt Dark Mode */
+body.dark-theme .theme-toggle-container { 
+    background: rgba(30, 30, 30, 0.85); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
+    border: 1px solid #444; 
+}
+body.dark-theme .theme-label-text { color: #e4e6eb; }
+
+/* Header & Khung Main */
+body.dark-theme header { 
+    background: linear-gradient(135deg, #162b1d, #121212); 
+    border-bottom: 2px solid #2e7d32; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+}
+body.dark-theme header h1 { color: #ffffff; text-shadow: none; }
+body.dark-theme header p { color: #81c784; }
+
+body.dark-theme main, body.dark-theme .modal-content { 
+    background-color: #1e1e1e; /* Màu xám nâng cấp tầng 1 */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+    border: 1px solid #333;
+}
+
+/* Chữ & Tiêu đề */
+body.dark-theme h2, body.dark-theme h3, body.dark-theme label { color: #e4e6eb; }
+body.dark-theme .subtitle, body.dark-theme p { color: #b0b3b8; }
+
+/* Ô nhập liệu (Inputs) - Thêm viền phát sáng khi bấm */
+body.dark-theme input[type="text"], 
+body.dark-theme input[type="tel"], 
+body.dark-theme input[type="email"], 
+body.dark-theme input[type="date"], 
+body.dark-theme select { 
+    background-color: #242526; 
+    color: #ffffff; 
+    border: 1px solid #444; 
+    transition: 0.2s;
+}
+body.dark-theme input::placeholder { color: #777; }
+body.dark-theme input:focus, body.dark-theme select:focus { 
+    border-color: #00c853; 
+    background-color: #2a2b2d;
+    box-shadow: 0 0 0 2px rgba(0, 200, 83, 0.2); /* Hiệu ứng Glow xịn xò */
+}
+
+/* Nhóm Dịch vụ & Thanh toán (Tạo khối nổi) */
+body.dark-theme .services-group { 
+    background-color: #242526; /* Màu xám tầng 2, sáng hơn nền main */
+    border-color: #3a3b3c; 
+    box-shadow: none;
+}
+body.dark-theme .services-group label { color: #e4e6eb !important; }
+body.dark-theme .services-group label:hover { color: #00c853 !important; }
+body.dark-theme .services-group input[type="checkbox"],
+body.dark-theme .services-group input[type="radio"] {
+    accent-color: #00c853;
+}
+
+/* Sơ đồ Sân (Style mới sang trọng hơn) */
+body.dark-theme .court-item { 
+    background-color: #242526; 
+    border-color: #2e7d32; 
+    color: #81c784; 
+    background-image: linear-gradient(to bottom, transparent 48%, #3a3b3c 48%, #3a3b3c 52%, transparent 52%); 
+}
+body.dark-theme .court-item:hover { background-color: #1b5e20; color: #fff; }
+body.dark-theme .court-item.selected { 
+    background-color: #ff9800; 
+    border-color: #f57c00; 
+    color: #fff; 
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+/* Bảng Ma trận Lịch (Timeline) */
+body.dark-theme #timeline-section { background: #242526; border-color: #3a3b3c; }
+body.dark-theme .timeline-legend { color: #b0b3b8; }
+body.dark-theme .court-name { color: #e4e6eb; }
+body.dark-theme .time-blocks { border-color: #444; }
+body.dark-theme .time-block { border-color: #444; }
+body.dark-theme .time-block.available { background: #1e3c28; color: #81c784; }
+body.dark-theme .time-block.booked { background: #4a1919; color: #e57373; opacity: 0.8; }
+
+/* Giờ động (Time slots) */
+body.dark-theme .time-slot { background: #242526; color: #e4e6eb; border-color: #444; }
+body.dark-theme .time-slot.available:hover { border-color: #00c853; color: #00c853; background: #1a2e20; }
+body.dark-theme .time-slot.available.selected { background: #00c853; color: #fff; border-color: #00c853; }
+body.dark-theme .time-slot.booked { background: #1a1a1a; color: #666; border-color: #333; }
+
+/* Phiếu Đặt Sân & Ghép Kèo */
+body.dark-theme .matchmaking-section { border-color: #444; }
+body.dark-theme .match-form { background-color: #242526; }
+body.dark-theme .match-card { background-color: #242526; border-left: 5px solid #ff8c00; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+body.dark-theme .match-info h4 { color: #e4e6eb; }
+body.dark-theme #booking-ticket { background-color: #1a2e20; border-color: #2e7d32; }
+body.dark-theme #booking-ticket h3 { color: #a5d6a7; }
+body.dark-theme #booking-ticket p { color: #e4e6eb; }
+body.dark-theme #booking-ticket p strong { color: #81c784; }
+body.dark-theme #booking-ticket span { color: #ffffff; }
+body.dark-theme #booking-ticket hr { border-top-color: #2e7d32 !important; }
+body.dark-theme #booking-ticket .thank-you { color: #a5d6a7 !important; }
+body.dark-theme .total-price { background-color: #4a1919; color: #ff8a80 !important; border-color: #d32f2f; }
+
+/* Fix ô Tổng tiền trong Pop-up Thanh toán khi bật Dark Mode */
+body.dark-theme .modal-total-price {
+    background-color: #3e1f1f; /* Nền màu đỏ đô (rất tối) để tệp với nền đen */
+    color: #ff8a80 !important; /* Chữ số tiền màu đỏ sáng/hồng cam cực kỳ nổi bật */
+    border: 1px dashed #d32f2f; /* Thêm viền đứt quãng màu đỏ để làm điểm nhấn */
+}
+
+/* =========================================
+   10. THÔNG BÁO POP-UP TRUNG TÂM (CÓ MÀN XÁM KHÓA NỀN)
+   ========================================= */
+#toast-container { 
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%; /* Phủ kín toàn bộ màn hình */
+    background: rgba(0, 0, 0, 0.5); /* Nền xám mờ */
+    backdrop-filter: blur(3px); /* Làm mờ cảnh vật phía sau */
+    z-index: 99999; 
+    display: flex; 
+    justify-content: center; /* Căn giữa ngang */
+    align-items: center; /* Căn giữa dọc */
+    
+    /* Mặc định ẩn tấm rèm đi */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Khi có class 'show', tấm rèm sẽ hiện ra và chặn mọi thao tác */
+#toast-container.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* KHÓA CHẶT thao tác trên trang web phía dưới */
+}
+
+.custom-toast { 
+    background: rgba(255, 255, 255, 0.98); 
+    border-top: 6px solid #ff9800; 
+    padding: 25px 40px; 
+    border-radius: 16px; 
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    text-align: center;
+    gap: 15px; 
+    
+    opacity: 0;
+    transform: scale(0.8); 
+    animation: popUpIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    color: #333; 
+    font-weight: bold; 
+    font-size: 16px; 
+    min-width: 320px; 
+    line-height: 1.5; 
+}
+
+.custom-toast.success { border-top-color: #00c853; }
+.custom-toast.error { border-top-color: #f44336; }
+
+@keyframes popUpIn { to { opacity: 1; transform: scale(1); } }
+@keyframes popUpOut { to { opacity: 0; transform: scale(0.8); } }
+
+/* Tương thích Dark Mode */
+body.dark-theme .custom-toast { 
+    background: rgba(36, 37, 38, 0.98); 
+    color: #e4e6eb; 
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6); 
+}
+/* =========================================
+   11. RESPONSIVE - GIAO DIỆN RIÊNG CHO PC / LAPTOP
+   ========================================= */
+/* Lệnh @media này chỉ tự động kích hoạt khi màn hình rộng từ 1024px trở lên (Máy tính) */
+@media (min-width: 1024px) {
+    main {
+        max-width: 1200px; /* Mở rộng khung chính, không bị bóp nghẹt 500px như trên điện thoại */
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Chia màn hình làm 2 phần: Trái chiếm 2/3, Phải chiếm 1/3 */
+        gap: 50px; /* Khoảng cách rộng rãi giữa 2 cột */
+        align-items: start; /* Chống kéo giãn chiều cao các khối */
+    }
+
+    /* Ép Tiêu đề "Đăng ký thuê sân" nằm trải dài ở hàng trên cùng */
+    main > h2 {
+        grid-column: 1 / -1;
+        margin-bottom: 10px;
+    }
+
+    /* GOM CỘT TRÁI: Dành trọn vẹn cho Form đặt sân và Phiếu vé */
+    #booking-form, #booking-ticket {
+        grid-column: 1 / 2;
+    }
+
+    /* GOM CỘT PHẢI: Đẩy bảng "Cộng đồng ghép kèo" sang làm thanh Sidebar bên phải */
+    .matchmaking-section {
+        grid-column: 2 / 3;
+        grid-row: 2 / 4;
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none; /* Bỏ đường gạch ngang chia tách cũ */
+        border-left: 2px dashed #ccc; /* Thêm đường gạch dọc ngăn cách 2 bên */
+        padding-left: 40px; /* Đẩy nội dung cách xa đường kẻ */
+    }
+
+    /* Tương thích Dark Mode cho đường kẻ dọc */
+    body.dark-theme .matchmaking-section {
+        border-left-color: #444;
+    }
+
+    /* TỐI ƯU UX CHO PC: 
+       Màn hình rộng nên ta dàn các Nút chọn giờ thành 6 cột thay vì 3 cột như điện thoại */
+    .time-slots-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+    }
+}
+/* =========================================
+   12. TÍNH NĂNG ĐẶT CỐ ĐỊNH THEO THÁNG
+   ========================================= */
+.recurring-box {
+    margin-top: 15px; background-color: #e3f2fd; border: 1px solid #90caf9;
+    padding: 12px; border-radius: 8px; transition: 0.3s;
+}
+.recurring-label {
+    display: flex; align-items: center; color: #1565c0 !important;
+    font-weight: bold; cursor: pointer; margin-bottom: 5px !important;
+}
+.recurring-checkbox {
+    width: 20px; height: 20px; margin-right: 10px; margin-top: 0; accent-color: #1565c0; cursor: pointer;
+}
+.recurring-note { font-size: 13px; color: #555; margin-left: 30px; font-style: italic; }
+
+/* Tương thích Dark Mode */
+body.dark-theme .recurring-box { background-color: #0d233a; border-color: #1565c0; }
+body.dark-theme .recurring-label { color: #64b5f6 !important; }
+body.dark-theme .recurring-note { color: #b0b3b8; }
+
+/* Style cho nút bấm mượt mà hơn */
+button {
+    /* ... (giữ lại các style cũ của bạn) ... */
+    
+    /* Thêm transition cho tất cả các thuộc tính */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+/* Hiệu ứng di chuột (Hover) */
+button:hover {
+    transform: translateY(-3px); /* Nút bay lên nhẹ */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Thêm bóng đổ */
+}
+
+/* Hiệu ứng khi Click (Active) */
+button:active {
+    transform: translateY(1px) scale(0.97); /* Nút nhún xuống và thu nhỏ */
+}
+
+/* Animation cho Phiếu vé */
+@keyframes ticketPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95); /* Chỉ trượt nhẹ từ dưới lên và hơi thu nhỏ */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1); /* Trở về vị trí gốc tĩnh tại */
+    }
+}
+
+#booking-ticket {
+    /* Thêm animation đã sửa */
+    animation: ticketPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    /* Đảm bảo nó không bị văng ra ngoài */
+    transform-origin: center top; 
+}
+
+/* Animation cho các thẻ kèo mới */
+@keyframes matchCardFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.match-card {
+    /* ... (giữ lại các style cũ) ... */
+    
+    /* Thêm animation nhỏ */
+    animation: matchCardFadeIn 0.5s ease-out forwards;
+}
+
+/* Hiệu ứng hover cho thẻ kèo */
+.match-card:hover {
+    border-color: #ff9800; /* Đổi màu viền khi hover */
+}
+
+/* =========================================
+   14. BẢNG MATRIX GRID (STYLE B-ZONE)
+   ========================================= */
+.matrix-container {
+    width: 100%; overflow-x: auto; border: 1px solid #ccc; border-radius: 8px; background: #fff;
+}
+.matrix-table {
+    width: 100%; border-collapse: collapse; min-width: 500px;
+}
+.matrix-table th, .matrix-table td {
+    border: 1px solid #eee; text-align: center; padding: 12px 5px; font-size: 14px; transition: 0.2s;
+}
+.matrix-table th { background-color: #1e88e5; color: white; position: sticky; top: 0; z-index: 2; font-weight: bold;}
+.matrix-table th.time-col { background-color: #1565c0; left: 0; z-index: 3; width: 65px; }
+.matrix-table td.time-col { background-color: #f8f9fa; font-weight: bold; position: sticky; left: 0; z-index: 1; color: #333; border-right: 2px solid #ccc;}
+
+/* Trạng thái các ô */
+.matrix-cell { cursor: pointer; background-color: #fff; }
+.matrix-cell:hover:not(.booked) { background-color: #e3f2fd; }
+.matrix-cell.selected { background-color: #ffeb3b; font-weight: bold; color: #d32f2f; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+.matrix-cell.booked { background-color: #ffebee; color: #c62828; cursor: not-allowed; opacity: 0.7;}
+
+/* Tương thích Dark Mode */
+body.dark-theme .matrix-container { background: #242526; border-color: #444; }
+body.dark-theme .matrix-table th { background-color: #1e3c28; }
+body.dark-theme .matrix-table th.time-col { background-color: #152b1c; }
+body.dark-theme .matrix-table td, body.dark-theme .matrix-table th { border-color: #444; }
+body.dark-theme .matrix-table td.time-col { background-color: #1e1e1e; color: #e4e6eb; border-right-color: #555; }
+body.dark-theme .matrix-cell { background-color: #242526; color: #e4e6eb; }
+body.dark-theme .matrix-cell:hover:not(.booked) { background-color: #3a3b3c; }
+body.dark-theme .matrix-cell.selected { background-color: #ffb300; color: #111; }
+body.dark-theme .matrix-cell.booked { background-color: #4a1919; color: #ff8a80; }
